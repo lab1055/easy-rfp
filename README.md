@@ -124,10 +124,11 @@ SESSION_NAME: your_desired_name # or auto (session folder will be timestamp stri
 Add these models to the project and provide the path in `tasks/wheat_detection.py` or `tasks/leaf_disease.py`. Please check the training code for these two tasks at `tasks/models/`.
 
 ## Citation
-
+```
 @article{easyrfp2020,
     Author = {Akshay L Chandra, Sai Vikas Desai, Masayuki Hirafuji, Seishi Ninomiya, Vineeth N Balasubramanian, Wei Guo},
     Title = {EasyRFP: An Easy to Use Edge Computing Toolkit for Real-Time Field Phenotyping},
     Journal = {https://github.com/lab1055/easy-rfp},
     Year = {2020}
 }
+```
