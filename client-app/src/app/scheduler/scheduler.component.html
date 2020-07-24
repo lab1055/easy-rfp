@@ -1,0 +1,117 @@
+<div class="row margin-top-15">
+  <div class="col-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Scheduler Mode Instructions</h5>
+        <p class="card-text">
+          Configure the schedule below and press <b>Start Process</b>. Capture
+          Interval is the interval at which an image is captured and processed for inference.
+          Notification Interval is how often you will be notified via email. 
+            Total Time is how long you want the process to run overall. Refresh to clear output.
+        </p>
+      </div>
+    </div>
+    <div class="card margin-top-15">
+      <div class="card-body">
+        <!--<h5 class="card-title">Settings</h5>-->
+        <form [formGroup]="form" (ngSubmit)="submitForSchedule()">
+          <!-- <div class="form-group">
+            <label for="exampleFormControlSelect1">Select Task type</label>
+            <select
+              formControlName="type"
+              class="form-control"
+              id="exampleFormControlSelect1"
+            >
+              <option value="classification">Classification</option>
+              <option value="detection">Detection</option>
+            </select>
+          </div> -->
+          <div class="form-group">
+            <label for="exampleFormControlSelect2">Select Task</label>
+            <select
+              formControlName="task"
+              class="form-control"
+              id="exampleFormControlSelect2"
+            >
+              <option *ngFor="let opt of tasks" [value]="opt.name">{{
+                opt.display_name
+              }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1"
+              >Email address (for Notification)</label
+            >
+            <input
+              formControlName="email"
+              type="email"
+              class="form-control"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+              placeholder="Multiple emails (comma separated)"
+            />
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Capture Interval</label>
+            <input
+              formControlName="captureInterval"
+              type="text"
+              class="form-control"
+              id="cptrtime"
+              aria-describedby="emailHelp"
+              placeholder="(in seconds)"
+            />
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Notification Interval</label>
+            <input
+              formControlName="notifInterval"
+              type="text"
+              class="form-control"
+              id="notifInterval"
+              aria-describedby="emailHelp"
+              placeholder="(in seconds)"
+            />
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Total Time</label>
+            <input
+              formControlName="totalTime"
+              type="text"
+              class="form-control"
+              id="notiftime"
+              aria-describedby="emailHelp"
+              placeholder="(in seconds)"
+            />
+          </div>
+
+          <button
+            class="btn btn-success"
+            type="submit"
+            [disabled]="!form.valid"
+            *ngIf="!submitted"
+          >
+            Start Process
+          </button>
+          <button
+            class="btn btn-danger"
+            *ngIf="submitted"
+            type="submit"
+            (click)="endProcess()"
+          >
+            End Process
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="card">
+      <div style="font-size: 13px;" class="card-body rightcol mb-5">
+        <div style="white-space: pre-line;" *ngFor="let message of messages">
+          {{ message }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

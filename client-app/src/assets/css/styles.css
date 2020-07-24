@@ -1,0 +1,58 @@
+img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.no-side-margin {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.no-side-padding {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.margin-top-15 {
+  margin-top: 15px;
+}
+
+.float-right {
+  float: right;
+}
+
+.float-left {
+  float: left;
+}
+
+.card-img-top {
+  width: 500px;
+  height: 300px;
+}
+
+.logs {
+  font-family: "Lucida Console", Courier, monospace;
+  font-size: 14;
+}
+
+.rightcol {
+  margin-right: 5px;
+  margin-left: 5px;
+  padding-top: 5px;
+
+  background-color: #dedede;
+  font-family: "Lucida Console", Courier, monospace;
+  font-size: 16px;
+
+  height: 570px;
+  overflow-y: scroll;
+}
+
+pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}

@@ -1,0 +1,9 @@
+Bacterial Blight
+Brown Spot
+Frogeye Spot
+Healthy
+Herbicide Injury
+IDC
+Pottasium Deficiency
+Bacterial Pustule
+SDS

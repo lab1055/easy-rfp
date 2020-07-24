@@ -1,0 +1,25 @@
+IMAGE:
+  RESIZE_WIDTH: 640 # in pixels
+  RESIZE_HEIGHT: 640 # in pixels
+IO:
+  LOGS_SAVE_DIR: logs/
+TASK:
+  TYPE: classification # detection or classification
+  NAME: DummyTask # WheatDetection or LeafDisease or DummyTask
+EMAIL:
+  # While you are free to use any email id, you are recommended to create
+  # a throwaway email id at any provider supporting SMTP (ex: Gmail).
+  # The only purpose of this email id is to send emails on behalf of the Jetson.
+  # Make sure you don't have any personal information connected to this email id
+  # to ensure security. Please know that you have been warned.
+  SRC_EMAIL_ID: veryownjetsontx@yandex.com
+  SRC_EMAIL_PASSWORD: dummypassword
+  SMTP_SERVER: smtp.yandex.com #smtp server of your email provider -> ex: smtp.gmail.com
+  SMTP_PORT: 465 # ex: 587
+  LOAD_FROM_LIST: email_list.txt
+TIME:
+  CAPTURE_INTERVAL: 5 # in seconds
+  NOTIF_INTERVAL: 20 # in seconds
+  TOTAL_TIME: 20000 # in seconds
+SESSION_NAME: auto # auto (session folder name timestamp string) or your_desired_name
+

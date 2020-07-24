@@ -1,0 +1,47 @@
+{'EMAIL': {'DEST_EMAIL_IDS': [['user1', 'user1@gmail.com'],
+                              ,
+           'SMTP_PORT': 465,
+           'SMTP_SERVER': 'smtp.emailprovider.com',
+           'SRC_EMAIL_ID': 'emailid@yandex.com',
+           'SRC_EMAIL_PASSWORD': '********'},
+ 'IMAGE': {'RESIZE_HEIGHT': 640, 'RESIZE_WIDTH': 640},
+ 'IO': {'IMG_SAVE_DIR': 'data/images',
+        'LOGS_SAVE_DIR': 'logs/',
+        'RESULTS_SAVE_DIR': 'data/results'},
+ 'TASK': 'wheat_detection',
+ 'TIME': {'CAPTURE_INTERVAL': 10, 'NOTIF_INTERVAL': 60}}
+
+
+Process started at: 10/06/2020 20:52:19
+Capturing images every: 0 hours 0 minutes 10 seconds
+Notification every: 0 hours 1 minutes 0 seconds
+
+ Image processed at 10/06/2020 20:52:29
+Results saved at data/results/img1.txt
+Number of objects detected: 3
+Result summary written to: logs/10062020_205219_log.csv
+
+ Image processed at 10/06/2020 20:52:39
+Results saved at data/results/img2.txt
+Number of objects detected: 5
+Result summary written to: logs/10062020_205219_log.csv
+
+ Image processed at 10/06/2020 20:52:49
+Results saved at data/results/img3.txt
+Number of objects detected: 19
+Result summary written to: logs/10062020_205219_log.csv
+
+ Image processed at 10/06/2020 20:52:59
+Results saved at data/results/img4.txt
+Number of objects detected: 8
+Result summary written to: logs/10062020_205219_log.csv
+
+ Image processed at 10/06/2020 20:53:09
+Results saved at data/results/img5.txt
+Number of objects detected: 5
+Result summary written to: logs/10062020_205219_log.csv
+
+ Image processed at 10/06/2020 20:53:19
+Results saved at data/results/img6.txt
+Number of objects detected: 7
+Result summary written to: logs/10062020_205219_log.csv

@@ -1,0 +1,100 @@
+<div class="row margin-top-15">
+  <div class="col-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Instructions</h5>
+        <p class="card-text">
+          Select a Task from the dropdown box below and press <b>Capture</b> to
+          instantly take a picture and perform the chosen task. Captured picture
+          can be seen on the right side. Inference is sent to the email provided. 
+          The logging section at the bottom shows where the captured image and results are saved. 
+          Refresh to clear output.
+        </p>
+      </div>
+    </div>
+    <div class="card margin-top-15">
+      <div class="card-body">
+        <!--<h5 class="card-title">Settings</h5>-->
+        <form [formGroup]="form" class="">
+          <div class="form-group">
+            <label for="exampleFormControlSelect1">Select Task</label>
+            <select
+              formControlName="task"
+              class="form-control"
+              id="exampleFormControlSelect2"
+            >
+              <option *ngFor="let opt of tasks" [value]="opt.name">{{
+                opt.display_name
+              }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1"
+              >Email address (for Notification)</label
+            >
+            <input
+              formControlName="email"
+              type="email"
+              class="form-control"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+              placeholder="Multiple emails (comma separated)"
+            />
+          </div>
+          <button
+            class="btn btn-success"
+            type="submit"
+            (click)="captureRealtime()"
+          >
+            Capture Image
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="card" style="padding: 14px;">
+      <img
+        *ngIf="showImage"
+        src="data:image/png;base64,{{ imageUrl }}"
+        class="card-img-top"
+        alt="..."
+      />
+
+      <div class="card-body row">
+        <span class="custom-control custom-switch col-md-4">
+          <!-- <input
+            type="checkbox"
+            checked
+            class="custom-control-input"
+            id="labelSwitch"
+          />
+          <label class="custom-control-label" for="customSwitch1"
+            >Show Labels</label
+          > -->
+        </span>
+        <span class="col-md-2"> </span>
+        <span id="Class Name" class="col-md-6">
+          <!-- Class Name: Wheat Ear -->
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row margin-top-15">
+  <div class="col-12">
+    <div class="card margin-top-15">
+      <h5 class="card-title">Logs</h5>
+      <div class="card">
+        <div
+          style="height: 200px; overflow-y: auto; font-size: 13px;"
+          class="card-body rightcol"
+        >
+          <div class="mb-3" style="white-space: pre-line;" *ngFor="let message of messages">
+            {{ message }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

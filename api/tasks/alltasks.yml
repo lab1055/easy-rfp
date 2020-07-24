@@ -1,0 +1,6 @@
+- name: LeafDisease
+  display_name: Leaf Classification
+  task_type: classification
+- name: WheatDetection
+  display_name: Wheat Detection
+  task_type: detection
