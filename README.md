@@ -1,4 +1,15 @@
 # EasyRFP: An Easy to Use Edge Computing Toolkit for Real-Time Field Phenotyping
+We propose EasyRFP, an edge computing toolkit for real-time field phenotyping. Recent advances in deep learning have catalysed rapid progress in high throughput field phenotyping. Much research has been dedicated towards developing accurate and cost effective deep learning models to capture phenotyping traits such as plant stress, yield and plant growth stages. 
+
+However, there is a shortage of software tools to promote the usage of such intelligent methods among plant phenotyping practitioners and researchers. To bridge this gap, we developed this, a Flask backend, Angular frontend software toolkit. Broadly speaking, our toolkit can be interfaced with a commercial GPU enabled micro computer (such as NVIDIA Jetson) and a digital camera. Precisely, our toolkit can be used to capture images and extract phenotypic traits in both real-time and in scheduled mode.
+
+## Working Example
+
+### Real-Time Mode
+<img src="https://github.com/lab1055/easy-rfp/blob/master/demos/realtime.gif">
+
+### Scheduler Mode
+<img src="https://github.com/lab1055/easy-rfp/blob/master/demos/schedule.gif">
 
 ## Installation
 Code is tested on Python 3.7 and 3.8. Works on both Windows and Linux systems.
@@ -48,7 +59,7 @@ Windows:
 ### Run Angular Frontend Server
 Inside `client-app/` do
 ```
-nm serve
+> nm serve
 ```
 
 Access the UI at https://localhost:4200/. If you port it to your local machine with `--host=0.0.0.0` command, access UI at https://192.168.X.X:4200/. Also, please change the `SOCKET_ENDPOINT` variable accordingly with your IP address in `client-app/src/environments/environment.ts` 
@@ -99,11 +110,11 @@ SESSION_NAME: your_desired_name # or auto (session folder will be timestamp stri
         return outputs
     ```
 * Finally, add the newly added task to `alltasks.yaml` as follows
-```
-- name: DummyTaskName
-  display_name: Dummy Task
-  task_type: classification (or detection)
-```
+    ```
+    - name: DummyTaskName
+      display_name: Dummy Task
+      task_type: classification (or detection)
+    ```
 
 ## Pretrained Models 
 
@@ -111,3 +122,12 @@ SESSION_NAME: your_desired_name # or auto (session folder will be timestamp stri
 * Leaf Disease Classification - [ResNet18](https://www.google.com/url?q=https://www.dropbox.com/s/8kzeyeopz8t5tpk/leaf_stress_resnet50.pth?dl%3D0&sa=D&source=hangouts&ust=1592644882326000&usg=AFQjCNFSeyA11V5HKlJHj72VvP4rdieY_g)
 
 Add these models to the project and provide the path in `tasks/wheat_detection.py` or `tasks/leaf_disease.py`. Please check the training code for these two tasks at `tasks/models/`.
+
+## Citation
+
+@article{easyrfp2020,
+    Author = {Akshay L Chandra, Sai Vikas Desai, Masayuki Hirafuji, Seishi Ninomiya, Vineeth N Balasubramanian, Wei Guo},
+    Title = {EasyRFP: An Easy to Use Edge Computing Toolkit for Real-Time Field Phenotyping},
+    Journal = {https://github.com/lab1055/easy-rfp},
+    Year = {2020}
+}
