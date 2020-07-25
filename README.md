@@ -59,10 +59,10 @@ Windows:
 ### Run Angular Frontend Server
 Inside `client-app/` do
 ```
-> nm serve
+> ng serve
 ```
 
-Access the UI at https://localhost:4200/. If you port it to your local machine with `--host=0.0.0.0` command, access UI at https://192.168.X.X:4200/. Also, please change the `SOCKET_ENDPOINT` variable accordingly with your IP address in `client-app/src/environments/environment.ts` 
+Access the UI at http://localhost:4200/. If you port it to your local machine with `--host=0.0.0.0` command, access UI at https://192.168.X.X:4200/. Also, please change the `SOCKET_ENDPOINT` variable accordingly with your IP address in `client-app/src/environments/environment.ts` 
 
 ### Some More Configuration
 
