@@ -7,7 +7,7 @@ class LeafDisease(AbstractTask):
 
     def __init__(self, img):
         self.img = img
-        self.model_path = 'tasks/models/LeafDisease/output/leaf_best_model.pt'
+        self.model_path = 'tasks/models/LeafDisease/output/leaf_stress_resnet18.pt'
         self.transform=transforms.Compose([
                        transforms.ToTensor(),
                        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010) )

@@ -10,12 +10,10 @@ class WheatDetection(AbstractTask):
 
     def __init__(self, img):
         self.img = img
-        self.model_path = 'tasks/models/Detectron2/output/model_final.pth'
+        self.model_path = 'tasks/models/Detectron2/output/wheat_head_frcnn.pth'
         self.cfg = get_cfg()
 
     def perform_task(self):
-#         if len(self.cfg.DATASETS.TEST) == 0:
-#             register_coco_instances("wheat_val", {}, "../../data/wheat_ear/annotations/instances_val2017.json", "../../data/wheat_ear/images")
         self.cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml"))
         self.cfg.DATASETS.TEST = ("wheat_val",)
         self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1

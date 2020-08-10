@@ -58,7 +58,7 @@ def save_and_log_det_results(img, outputs, img_name, img_save_dir, results_save_
 
 def save_and_log_clf_results(img, outputs, img_name, img_save_dir, results_save_dir, log_filename, socketio):
     # save input image to images/
-    image_path = os.path.join(img_save_dir, img_name)
+    image_path = os.path.join(results_save_dir, img_name)
     cv2.imwrite(image_path, img)
     return log_clf_results(outputs, image_path, results_save_dir, log_filename, socketio)
 

@@ -3,16 +3,11 @@ We propose EasyRFP, an edge computing toolkit for real-time field phenotyping. R
 
 However, there is a shortage of software tools to promote the usage of such intelligent methods among plant phenotyping practitioners and researchers. To bridge this gap, we developed this, a Flask backend, Angular frontend software toolkit. Broadly speaking, our toolkit can be interfaced with a commercial GPU enabled micro computer (such as NVIDIA Jetson) and a digital camera. Precisely, our toolkit can be used to capture images and extract phenotypic traits in both real-time and in scheduled mode.
 
-## Working Example
-
-### Real-Time Mode
-<img src="https://github.com/lab1055/easy-rfp/blob/master/demos/realtime.gif">
-
-### Scheduler Mode
-<img src="https://github.com/lab1055/easy-rfp/blob/master/demos/schedule.gif">
+## Demonstration
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/oAGbpVgPE6U/0.jpg)](https://www.youtube.com/watch?v=oAGbpVgPE6U)
 
 ## Installation
-Code is tested on Python 3.7 and 3.8. Works on both Windows and Linux systems.
+Toolkit is tested only on Python 3.6. Works on both Windows and Linux systems.  
 
 To use the basic template of the toolkit (without pretrained models)
 ```
@@ -22,21 +17,12 @@ Flask==1.1.2
 Flask-Cors==3.0.8
 Flask-SocketIO==4.3.1
 ```
-NodeJS Anaconda install:
-```
-conda install -c conda-forge nodejs
-```
-Direct install:
-```
-npm install
-```
 
-
-To use/test the provided pretrained models, you will need
+NodeJS & Angular installation:
 ```
-detectron2==0.1.3+cu101
-torch==1.5.0+cu101
-torchvision==0.6.0+cu101
+> pip install nodeenv
+> nodeenv -p
+> npm install
 ```
 
 ## Execution
@@ -67,6 +53,11 @@ Access the UI at http://localhost:4200/. If you port it to your local machine wi
 ### Some More Configuration
 
 ```
+IMAGE:
+  # Resizing is important since the DSLR captured images are huge (5000x4000 approximately) 
+  # The Flask server could die trying to work with such huge images
+  RESIZE_WIDTH: 640 # in pixels
+  RESIZE_HEIGHT: 640 # in pixels
 IO:
   LOGS_SAVE_DIR: logs/
 EMAIL:
@@ -123,10 +114,23 @@ SESSION_NAME: your_desired_name # or auto (session folder will be timestamp stri
 
 Add these models to the project and provide the path in `tasks/wheat_detection.py` or `tasks/leaf_disease.py`. Please check the training code for these two tasks at `tasks/models/`.
 
+
+To use/test the provided pretrained models, you will need
+```
+detectron2==0.1.3+cu101
+torch==1.5.0+cu101
+torchvision==0.6.0+cu101
+```
+
+To install PyTorch and torchvision on the NVIDIA Jetson, you can follow the installation instructions [provided here](https://forums.developer.nvidia.com/t/pytorch-for-jetson-nano-version-1-6-0-now-available/72048). Detectron2 can be installed with the following command:
+```
+python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'
+```
+
 ## Citation
 ```
 @article{easyrfp2020,
-    Author = {Akshay L Chandra, Sai Vikas Desai, Masayuki Hirafuji, Seishi Ninomiya, Vineeth N Balasubramanian, Wei Guo},
+    Author = {Sai Vikas Desai, Akshay L Chandra, Masayuki Hirafuji, Seishi Ninomiya, Vineeth N Balasubramanian, Wei Guo},
     Title = {EasyRFP: An Easy to Use Edge Computing Toolkit for Real-Time Field Phenotyping},
     Journal = {https://github.com/lab1055/easy-rfp},
     Year = {2020}

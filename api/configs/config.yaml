@@ -1,11 +1,10 @@
 IMAGE:
+  # Resizing is important since the DSLR captured images are huge (5000x4000 approximately) 
+  # The Flask server could die trying to work with such huge images
   RESIZE_WIDTH: 640 # in pixels
   RESIZE_HEIGHT: 640 # in pixels
 IO:
   LOGS_SAVE_DIR: logs/
-TASK:
-  TYPE: classification # detection or classification
-  NAME: DummyTask # WheatDetection or LeafDisease or DummyTask
 EMAIL:
   # While you are free to use any email id, you are recommended to create
   # a throwaway email id at any provider supporting SMTP (ex: Gmail).
@@ -16,10 +15,4 @@ EMAIL:
   SRC_EMAIL_PASSWORD: dummypassword
   SMTP_SERVER: smtp.yandex.com #smtp server of your email provider -> ex: smtp.gmail.com
   SMTP_PORT: 465 # ex: 587
-  LOAD_FROM_LIST: email_list.txt
-TIME:
-  CAPTURE_INTERVAL: 5 # in seconds
-  NOTIF_INTERVAL: 20 # in seconds
-  TOTAL_TIME: 20000 # in seconds
 SESSION_NAME: auto # auto (session folder name timestamp string) or your_desired_name
-

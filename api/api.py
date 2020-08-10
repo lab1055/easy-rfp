@@ -62,6 +62,10 @@ def realtime():
     with open('configs/config.yaml', 'r') as f:
         cfg = yaml.safe_load(f)
     
+    # image resizing
+    resize_width = cfg['IMAGE']['RESIZE_WIDTH']
+    resize_height = cfg['IMAGE']['RESIZE_HEIGHT']
+
     # email settings
     src_email = cfg['EMAIL']['SRC_EMAIL_ID']
     src_pass = cfg['EMAIL']['SRC_EMAIL_PASSWORD']
@@ -73,14 +77,10 @@ def realtime():
     # i/o settings
     logs_save_dir = cfg['IO']['LOGS_SAVE_DIR']
 
-    # model & task settings
-    resize_width = cfg['IMAGE']['RESIZE_WIDTH']
-    resize_height = cfg['IMAGE']['RESIZE_HEIGHT']
-    
     # get task type
     with open('tasks/alltasks.yml', 'r') as f:
         all_tasks = yaml.safe_load(f)
-    
+        
     for x in all_tasks:
         if x['name'] == arguments['task']:
             task_type = x['task_type']
@@ -129,11 +129,10 @@ def realtime():
     camera_file = camera.file_get(file_path.folder,file_path.name,gp.GP_FILE_TYPE_NORMAL)
     target = os.path.join(img_save_dir, file_path_jpg)
     gp.gp_file_save(camera_file, target)
-    
+
     img_name = file_path_jpg
-    img = cv2.imread(img_name)
-    img = cv2.resize(img, (resize_width, resize_height),
-                     interpolation=cv2.INTER_AREA)
+    img = cv2.imread(target)
+    img = cv2.resize(img, (resize_width, resize_height), interpolation=cv2.INTER_AREA)
     outputs = inference(img, arguments['task'])
 
     print("".join((img_save_dir, '/', img_name)))
@@ -160,6 +159,10 @@ def schedule():
     with open('configs/config.yaml', 'r') as f:
         cfg = yaml.safe_load(f)
     
+    # image resizing
+    resize_width = cfg['IMAGE']['RESIZE_WIDTH']
+    resize_height = cfg['IMAGE']['RESIZE_HEIGHT']
+
     # email settings
     src_email = cfg['EMAIL']['SRC_EMAIL_ID']
     src_pass = cfg['EMAIL']['SRC_EMAIL_PASSWORD']
@@ -170,10 +173,7 @@ def schedule():
     
     logs_save_dir = cfg['IO']['LOGS_SAVE_DIR']
 
-    # model & task settings
-    resize_width = cfg['IMAGE']['RESIZE_WIDTH']
-    resize_height = cfg['IMAGE']['RESIZE_HEIGHT']
-    
+
     # get task type
     with open('tasks/alltasks.yml', 'r') as f:
         all_tasks = yaml.safe_load(f)
@@ -231,7 +231,6 @@ def schedule():
     start_time = capture_start
     elapsed_time = 0
     
-    image_counter = 1
     print(dest_emails)
     while elapsed_time <= total_time:
         # sleep one second
@@ -244,10 +243,11 @@ def schedule():
             camera_file = camera.file_get(file_path.folder,file_path.name,gp.GP_FILE_TYPE_NORMAL)
             target = os.path.join(img_save_dir,file_path_jpg)
             gp.gp_file_save(camera_file, target)
-            
-            img_name = file_path_jpg
-            img = cv2.imread(img_name)
 
+            img_name = file_path_jpg
+            img = cv2.imread(target)
+            img = cv2.resize(img, (resize_width, resize_height), interpolation=cv2.INTER_AREA)
+            print(img_name, img)
             outputs = inference(img, arguments['task'])
 
             # save image and inference and log metadata to csv
