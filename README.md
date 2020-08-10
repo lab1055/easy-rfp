@@ -3,7 +3,7 @@ We propose EasyRFP, an edge computing toolkit for real-time field phenotyping. R
 
 However, there is a shortage of software tools to promote the usage of such intelligent methods among plant phenotyping practitioners and researchers. To bridge this gap, we developed this, a Flask backend, Angular frontend software toolkit. Broadly speaking, our toolkit can be interfaced with a commercial GPU enabled micro computer (such as NVIDIA Jetson) and a digital camera. Precisely, our toolkit can be used to capture images and extract phenotypic traits in both real-time and in scheduled mode.
 
-## Demonstration
+## Demonstration (Video)
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/oAGbpVgPE6U/0.jpg)](https://www.youtube.com/watch?v=oAGbpVgPE6U)
 
 ## Installation
