@@ -130,6 +130,9 @@ def realtime():
     target = os.path.join(img_save_dir, file_path_jpg)
     gp.gp_file_save(camera_file, target)
 
+#    file_path_jpg = '111.png'
+#    file_path_jpg = '000001.jpg'
+
     img_name = file_path_jpg
     img = cv2.imread(target)
     img = cv2.resize(img, (resize_width, resize_height), interpolation=cv2.INTER_AREA)
@@ -219,7 +222,7 @@ def schedule():
     # log that process started
     # print that process started
     log_filename = os.path.join(session_dir, 'log.txt')
-    log_started_scheduler(cfg, log_filename)
+    log_started_scheduler(cfg, t_capture, t_notif, total_time, log_filename)
 
     # initialize the camera.
     camera = gp.Camera()
@@ -229,36 +232,40 @@ def schedule():
     capture_start = time.time()
     notif_start = capture_start
     start_time = capture_start
+    delay_time = 0
     elapsed_time = 0
-    
-    print(dest_emails)
-    while elapsed_time <= total_time:
+    while elapsed_time <= total_time + delay_time:
         # sleep one second
         time.sleep(1)
         iter_start_time = time.time()
         elapsed_time_c = time.time() - capture_start
-        if elapsed_time_c > t_capture:
+        if elapsed_time_c > t_capture + delay_time:
+            # Camera capture
+            # Calculate capture delay time
+            delay_time = time.time()
             file_path = camera.capture(gp.GP_CAPTURE_IMAGE)
             file_path_jpg = file_path.name.replace("cr2", "JPG")
             camera_file = camera.file_get(file_path.folder,file_path.name,gp.GP_FILE_TYPE_NORMAL)
-            target = os.path.join(img_save_dir,file_path_jpg)
+            target = os.path.join(img_save_dir, file_path_jpg)
             gp.gp_file_save(camera_file, target)
-
-            img_name = file_path_jpg
+            
+            
+            img_name = os.path.basename(target)
             img = cv2.imread(target)
             img = cv2.resize(img, (resize_width, resize_height), interpolation=cv2.INTER_AREA)
-            print(img_name, img)
+            
             outputs = inference(img, arguments['task'])
 
             # save image and inference and log metadata to csv
             log_csv = save_and_log_results(
                 img, outputs, img_name, img_save_dir, results_save_dir, log_filename, task_type, socketio)
-
-            capture_start = iter_start_time
+            
+            delay_time = time.time() - delay_time
+            capture_start = iter_start_time - delay_time
             elapsed_time_c = 0
         elapsed_time_n = iter_start_time - notif_start
 
-        if elapsed_time_n > t_notif:
+        if elapsed_time_n > t_notif + delay_time:
             notify_email(src_email, src_pass, smtp_host, smtp_port,
                          dest_emails, log_csv, log_filename)
             notif_start = iter_start_time

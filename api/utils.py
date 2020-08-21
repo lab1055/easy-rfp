@@ -48,11 +48,11 @@ def save_and_log_det_results(img, outputs, img_name, img_save_dir, results_save_
     cv2.imwrite(result_img_loc, img_with_dets)
     
     # save output to results/
-    result_ann_loc = os.path.join(results_save_dir, img_name[:-4]+'.txt')
+    result_ann_loc = os.path.join(results_save_dir, img_name.split('.')[0]+'.txt')
     with open(result_ann_loc, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerows(outputs)
-
+        for k,b in outputs.items():
+            writer.writerow([f'{b[0]},{b[1]},{b[2]},{b[3]}'])
     return log_det_results(outputs, result_img_loc, result_ann_loc, log_filename, socketio)
 
 
@@ -162,7 +162,7 @@ def log_started_realtime(cfg, filename):
         f.write(text)
 
 
-def log_started_scheduler(cfg, filename):
+def log_started_scheduler(cfg, capture_time, notif_time, total_time, filename):
 
     text = ''
 
@@ -171,14 +171,16 @@ def log_started_scheduler(cfg, filename):
     cfg_['EMAIL']['SRC_EMAIL_PASSWORD'] = '********'
     cfg_print = pprint.pformat(cfg_)
 
-    capture_time = time_human(cfg['TIME']['CAPTURE_INTERVAL'])
-    notif_time = time_human(cfg['TIME']['NOTIF_INTERVAL'])
+    capture_time = time_human(capture_time)
+    notif_time = time_human(notif_time)
+    total_time = time_human(total_time)
 
     now = datetime.now()
     now_text = now.strftime("%d/%m/%Y %H:%M:%S")
     started = 'Scheduler Mode Process started at: ' + now_text + '\n'
     started += 'Capturing images every: ' + capture_time + '\n'
     started += 'Notification every: ' + notif_time + '\n'
+    started += 'Total time: ' + total_time + '\n'
     text += 'Contents of YAML File:\n'
     text += cfg_print + '\n\n\n'
     text += started
@@ -196,10 +198,8 @@ def notify_email(src_email, src_pass, smtp_host, smtp_port, dest_emails, attachm
     now = datetime.now()
     now_text = now.strftime("%d/%m/%Y %H:%M:%S")
 
-    # loop over dest email ids
-#   for index in range(len(dest_emails)):
-
-    msg = MIMEMultipart()       # create a message
+    # create a message
+    msg = MIMEMultipart()
     msg['Message-ID'] = make_msgid()
 
     # setup the parameters of the message
