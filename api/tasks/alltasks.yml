@@ -4,3 +4,6 @@
 - name: WheatDetection
   display_name: Wheat Detection
   task_type: detection
+- name: LeafSegmentation
+  display_name: Leaf Segmentation
+  task_type: segmentation

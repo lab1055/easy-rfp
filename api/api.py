@@ -27,7 +27,7 @@ import base64
 import cv2
 import gphoto2 as gp
 
-from utils import log_started_scheduler, log_started_realtime, save_and_log_results, notify_email, log_generic
+import utils
 from tasks.task_bank import inference
 
 
@@ -117,21 +117,22 @@ def realtime():
     # log that process started
     # print that process started
     log_filename = os.path.join(session_dir, 'log.txt')
-    log_started_realtime(cfg, log_filename)
+    utils.log_started_realtime(cfg, log_filename)
 
     # initialize the camera.
     camera = gp.Camera()
     camera.init()
 
-    # start capturing
+#     # start capturing
     file_path = camera.capture(gp.GP_CAPTURE_IMAGE)
     file_path_jpg = file_path.name.replace("cr2", "JPG")
     camera_file = camera.file_get(file_path.folder,file_path.name,gp.GP_FILE_TYPE_NORMAL)
     target = os.path.join(img_save_dir, file_path_jpg)
     gp.gp_file_save(camera_file, target)
 
-#    file_path_jpg = '111.png'
-#    file_path_jpg = '000001.jpg'
+#     file_path_jpg = '111.png'
+#     file_path_jpg = '000001.jpg'
+#     file_path_jpg = '0092.png'
 
     img_name = file_path_jpg
     img = cv2.imread(target)
@@ -141,11 +142,11 @@ def realtime():
     print("".join((img_save_dir, '/', img_name)))
 
     # save image and inference and log metadata to csv
-    log_csv = save_and_log_results(
+    log_csv = utils.save_and_log_results(
         img, outputs, img_name, img_save_dir, results_save_dir, log_filename, task_type, socketio)
 
     # send email
-    notify_email(src_email, src_pass, smtp_host, smtp_port,
+    utils.notify_email(src_email, src_pass, smtp_host, smtp_port,
                  dest_emails, log_csv, log_filename)
 
     # send output image to UI
@@ -222,7 +223,7 @@ def schedule():
     # log that process started
     # print that process started
     log_filename = os.path.join(session_dir, 'log.txt')
-    log_started_scheduler(cfg, t_capture, t_notif, total_time, log_filename)
+    utils.log_started_scheduler(cfg, t_capture, t_notif, total_time, log_filename)
 
     # initialize the camera.
     camera = gp.Camera()
@@ -257,7 +258,7 @@ def schedule():
             outputs = inference(img, arguments['task'])
 
             # save image and inference and log metadata to csv
-            log_csv = save_and_log_results(
+            log_csv = utils.save_and_log_results(
                 img, outputs, img_name, img_save_dir, results_save_dir, log_filename, task_type, socketio)
             
             delay_time = time.time() - delay_time
@@ -266,7 +267,7 @@ def schedule():
         elapsed_time_n = iter_start_time - notif_start
 
         if elapsed_time_n > t_notif + delay_time:
-            notify_email(src_email, src_pass, smtp_host, smtp_port,
+            utils.notify_email(src_email, src_pass, smtp_host, smtp_port,
                          dest_emails, log_csv, log_filename)
             notif_start = iter_start_time
             elapsed_time_n = 0

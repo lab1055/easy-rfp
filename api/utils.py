@@ -5,6 +5,9 @@ from datetime import datetime
 import copy
 import cv2
 import os
+import io
+
+import numpy as np
 
 import smtplib
 
@@ -15,28 +18,25 @@ from email.mime.base import MIMEBase
 from email import encoders
 from email.utils import make_msgid
 
-
-def draw_rectangles(img, boxes):
-
-    color = (255, 0, 0)
-    thickness = 2
-
-    for k, b in boxes.items():
-        img = cv2.rectangle(img, (b[0], b[1]), (b[2], b[3]), color, thickness)
-    return img
-
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvas
 
 def save_and_log_results(img, outputs, img_name, img_save_dir, results_save_dir, log_filename, task_type, socketio):
-    # socketio.emit('logging', {'data': 'If this works, im happy.'})
+    
     if task_type == 'detection':
         log_csv = save_and_log_det_results(
             img, outputs, img_name, img_save_dir, results_save_dir, log_filename, socketio)
     elif task_type == 'classification':
         log_csv = save_and_log_clf_results(
             img, outputs, img_name, img_save_dir, results_save_dir, log_filename, socketio)
+    elif task_type == 'segmentation':
+        log_csv = save_and_log_seg_results(
+            img, outputs, img_name, img_save_dir, results_save_dir, log_filename, socketio)
+    
     return log_csv
 
 
+# Detection methods
 def save_and_log_det_results(img, outputs, img_name, img_save_dir, results_save_dir, log_filename, socketio):
 
     # save input image to images/
@@ -48,7 +48,7 @@ def save_and_log_det_results(img, outputs, img_name, img_save_dir, results_save_
     cv2.imwrite(result_img_loc, img_with_dets)
     
     # save output to results/
-    result_ann_loc = os.path.join(results_save_dir, img_name.split('.')[0]+'.txt')
+    result_ann_loc = os.path.join(results_save_dir, f"{img_name.split('.')[0]}.txt")
     with open(result_ann_loc, "w", newline="") as f:
         writer = csv.writer(f)
         for k,b in outputs.items():
@@ -56,10 +56,56 @@ def save_and_log_det_results(img, outputs, img_name, img_save_dir, results_save_
     return log_det_results(outputs, result_img_loc, result_ann_loc, log_filename, socketio)
 
 
+def log_det_results(boxes, output_img_loc, output_ann_loc, log_filename, socketio):
+
+    # csv filename
+    csv_log = log_filename[:-4] + '.csv'
+
+    if not os.path.exists(csv_log):
+        with open(csv_log, 'w') as f:
+            writer = csv.writer(f)
+            writer.writerow(['Time Captured', 'Image Result Location',
+                             'Image Inference Location', 'Number of Objects'])
+
+    with open(csv_log, 'a') as f:
+        writer = csv.writer(f)
+
+        now = datetime.now()
+        now_text = now.strftime("%d/%m/%Y %H:%M:%S")
+
+        writer.writerow([now_text, output_img_loc, output_ann_loc, len(boxes)])
+
+    text = f'\nImage captured and processed at {now_text} \n'
+    text += f'Results saved at {output_ann_loc} \n'
+    text += f'Number of objects detected: {str(len(boxes))} \n'
+    text += f'Result summary written to: {csv_log} \n'
+
+    # emit socket event
+    socketio.emit('Logs', {'data': text})
+
+    log_generic(text, log_filename)
+
+    return csv_log
+
+
+def draw_rectangles(img, boxes):
+
+    color = (255, 0, 0)
+    thickness = 2
+
+    for k, b in boxes.items():
+        img = cv2.rectangle(img, (b[0], b[1]), (b[2], b[3]), color, thickness)
+    
+    return img
+
+
+# Classification methods
 def save_and_log_clf_results(img, outputs, img_name, img_save_dir, results_save_dir, log_filename, socketio):
+    
     # save input image to images/
     image_path = os.path.join(results_save_dir, img_name)
     cv2.imwrite(image_path, img)
+    
     return log_clf_results(outputs, image_path, results_save_dir, log_filename, socketio)
 
 
@@ -83,10 +129,10 @@ def log_clf_results(outputs, image_path, results_save_dir, log_filename, socketi
 
         writer.writerow([now_text, image_path, class_name, prob])
 
-    text = '\nImage captured and processed at '+now_text + '\n'
-    text += 'Image saved at ' + image_path + '\n'
-    text += 'Predicted Class Name: ' + class_name + '\n'
-    text += 'Class Probability: ' + str(prob) + '\n'
+    text = f'\nImage captured and processed at {now_text} \n'
+    text += f'Image saved at {image_path} \n'
+    text += f'Predicted Class Name: {class_name} \n'
+    text += f'Class Probability: {str(prob)} \n'
 
     # emit socket event
     socketio.emit('Logs', {'data': text})
@@ -96,16 +142,38 @@ def log_clf_results(outputs, image_path, results_save_dir, log_filename, socketi
     return csv_log
 
 
-def log_det_results(boxes, output_img_loc, output_ann_loc, log_filename, socketio):
+# Segmentation methods
+def save_and_log_seg_results(img, outputs, img_name, img_save_dir, results_save_dir, log_filename, socketio):
+    output_mask = outputs.permute(1,2,0)
+    # save input image to images/
+    cv2.imwrite(os.path.join(img_save_dir, img_name), img)
+    
+    # save output mask to results/
+#     cv2.imwrite(os.path.join(results_save_dir, img_name), np.array(output_mask, dtype=np.float32))
+    
+    # save segmentation overlay + mask (side by side) to results/ 
+    img_with_mask_fig = overlay_mask(img, output_mask)
+    canvas = FigureCanvas(img_with_mask_fig)
+    canvas.draw()
+    img_with_mask = np.array(canvas.renderer.buffer_rgba())
+#     output_img_loc = os.path.join(results_save_dir, f"{img_name.split('.')[0]}_mask_overlay.{img_name.split('.')[1]}")
+    output_img_loc = os.path.join(results_save_dir, img_name)
+    cv2.imwrite(output_img_loc, img_with_mask)
+    
+    return log_seg_results(output_mask, output_img_loc, log_filename, socketio)
 
+
+def log_seg_results(output_mask, output_img_loc, log_filename, socketio):
+    
     # csv filename
     csv_log = log_filename[:-4] + '.csv'
-
+    
+    mask_area = output_mask.sum().item()/(output_mask.shape[0]*output_mask.shape[1])
+    
     if not os.path.exists(csv_log):
         with open(csv_log, 'w') as f:
             writer = csv.writer(f)
-            writer.writerow(['Time Captured', 'Image Result Location',
-                             'Image Inference Location', 'Number of Objects'])
+            writer.writerow(['Time Captured', 'Output Mask Location', 'Area of Mask'])
 
     with open(csv_log, 'a') as f:
         writer = csv.writer(f)
@@ -113,12 +181,13 @@ def log_det_results(boxes, output_img_loc, output_ann_loc, log_filename, socketi
         now = datetime.now()
         now_text = now.strftime("%d/%m/%Y %H:%M:%S")
 
-        writer.writerow([now_text, output_img_loc, output_ann_loc, len(boxes)])
+        writer.writerow([now_text, output_img_loc, mask_area])
 
-    text = '\nImage captured and processed at '+now_text + '\n'
-    text += 'Results saved at ' + output_ann_loc + '\n'
-    text += 'Number of objects detected: '+str(len(boxes)) + '\n'
-    text += 'Result summary written to: ' + csv_log + '\n'
+    text = f'\nImage captured and processed at {now_text} \n'
+    text += f'Results saved at {output_img_loc} \n'
+    
+    text += f'Area of segmentation mask: {str(mask_area)} \n'
+    text += f'Result summary written to: {csv_log} \n'
 
     # emit socket event
     socketio.emit('Logs', {'data': text})
@@ -126,6 +195,22 @@ def log_det_results(boxes, output_img_loc, output_ann_loc, log_filename, socketi
     log_generic(text, log_filename)
 
     return csv_log
+
+
+def overlay_mask(img, output_mask):
+    
+    fig = plt.figure(figsize=(6, 3))
+    plt.subplot(1,2,1)
+    masked = np.ma.masked_where(output_mask == 0, output_mask)
+    plt.imshow(np.asarray(img), 'gray', interpolation='none')
+    plt.imshow(masked, 'jet', interpolation='none', alpha=0.8)
+    plt.axis('off')
+    
+    plt.subplot(1,2,2)
+    plt.imshow(output_mask, cmap='gray')
+    plt.axis('off')
+    
+    return fig
 
 
 def time_human(seconds):
@@ -153,9 +238,9 @@ def log_started_realtime(cfg, filename):
 
     now = datetime.now()
     now_text = now.strftime("%d/%m/%Y %H:%M:%S")
-    started = 'Real-Time Mode Process started at: ' + now_text + '\n'
+    started = f'Real-Time Mode Process started at: {now_text} \n'
     text += 'Contents of YAML File:\n'
-    text += cfg_print + '\n\n\n'
+    text += f'{cfg_print} \n\n\n'
     text += started
     print(text)
     with open(filename, 'a') as f:
@@ -177,12 +262,12 @@ def log_started_scheduler(cfg, capture_time, notif_time, total_time, filename):
 
     now = datetime.now()
     now_text = now.strftime("%d/%m/%Y %H:%M:%S")
-    started = 'Scheduler Mode Process started at: ' + now_text + '\n'
-    started += 'Capturing images every: ' + capture_time + '\n'
-    started += 'Notification every: ' + notif_time + '\n'
-    started += 'Total time: ' + total_time + '\n'
+    started = f'Scheduler Mode Process started at: {now_text}  \n'
+    started += f'Capturing images every:  {capture_time} \n'
+    started += f'Notification every: {notif_time} \n'
+    started += f'Total time: {total_time} \n'
     text += 'Contents of YAML File:\n'
-    text += cfg_print + '\n\n\n'
+    text += f'{cfg_print} \n\n\n'
     text += started
 
     print(text)
@@ -209,8 +294,7 @@ def notify_email(src_email, src_pass, smtp_host, smtp_port, dest_emails, attachm
 
     # add in the message body
     message = 'Please find the task summary in attachments.'
-    print('Summary of results being attached and sent to {} recipients.'.format(
-        len(dest_emails)))
+    print(f'Summary of results being attached and sent to {dest_emails} recipients.')
 
     msg.attach(MIMEText(message, 'plain'))
 
@@ -239,5 +323,4 @@ def notify_email(src_email, src_pass, smtp_host, smtp_port, dest_emails, attachm
 
     s.quit()
 
-    log_generic('\nNotified via email to {} recipients!'.format(
-        len(dest_emails)), log_filename)
+    log_generic(f'\nNotified via email to {dest_emails} recipients!', log_filename)
