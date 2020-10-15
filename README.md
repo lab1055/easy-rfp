@@ -110,9 +110,9 @@ SESSION_NAME: your_desired_name # or auto (session folder will be timestamp stri
 
 ## Pretrained Models 
 
-* Wheat Ear Detection - [FasterRCNN ResNet101](https://www.google.com/url?q=https://www.dropbox.com/s/74hvt7ykzg42tg7/wheat_head_frcnn.pth?dl%3D0&sa=D&source=hangouts&ust=1592644895243000&usg=AFQjCNHaJ6uUhi1fmsskQy-gN2vz93RB1A)
-* Leaf Disease Classification - [ResNet18](https://www.google.com/url?q=https://www.dropbox.com/s/8kzeyeopz8t5tpk/leaf_stress_resnet50.pth?dl%3D0&sa=D&source=hangouts&ust=1592644882326000&usg=AFQjCNFSeyA11V5HKlJHj72VvP4rdieY_g)
-* Leaf Segmentation - [MaskRCNN ResNet50]()
+* Wheat Ear Detection - [FasterRCNN ResNet101](https://www.dropbox.com/s/74hvt7ykzg42tg7/wheat_head_frcnn.pth) (480 MB)
+* Leaf Disease Classification - [ResNet18](https://www.dropbox.com/s/8kzeyeopz8t5tpk/leaf_stress_resnet50.pth) (45 MB)
+* Leaf Segmentation - [MaskRCNN ResNet50](https://www.dropbox.com/s/7nobrkr6i2dnwg1/leaf_seg_final.pth) (350 MB)
 
 Add these models to the project and provide the path in `tasks/wheat_detection.py` or `tasks/leaf_disease.py` or `tasks/leaf_segmentation.py`. Please check the training code for these three tasks at `tasks/models/`.
 
