@@ -1,7 +1,7 @@
 # EasyRFP: An Easy to Use Edge Computing Toolkit for Real-Time Field Phenotyping
 We propose EasyRFP, an edge computing toolkit for real-time field phenotyping. Recent advances in deep learning have catalysed rapid progress in high throughput field phenotyping. Much research has been dedicated towards developing accurate and cost effective deep learning models to capture phenotyping traits such as plant stress, yield and plant growth stages. 
 
-However, there is a shortage of software tools to promote the usage of such intelligent methods among plant phenotyping practitioners and researchers. To bridge this gap, we developed this, a Flask backend, Angular frontend software toolkit. Broadly speaking, our toolkit can be interfaced with a commercial GPU enabled micro computer (such as NVIDIA Jetson) and a digital camera. Precisely, our toolkit can be used to capture images and extract phenotypic traits in both real-time and in scheduled mode.
+However, there is a shortage of software tools to promote the usage of such intelligent methods among plant phenotyping practitioners and researchers. To bridge this gap, we developed this, a Flask backend, Angular frontend software toolkit. Broadly speaking, our toolkit can be interfaced with a commercial GPU enabled micro computer (such as NVIDIA Jetson) and a digital camera. Precisely, our toolkit can be used to capture images and extract phenotypic traits in both real-time and in scheduled mode. Currently, we support classification, detection and instance segmentation tasks. 
 
 ## Demonstration (Video)
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/oAGbpVgPE6U/0.jpg)](https://www.youtube.com/watch?v=oAGbpVgPE6U)
@@ -48,7 +48,7 @@ Inside `client-app/` do
 > ng serve
 ```
 
-Access the UI at http://localhost:4200/. If you port it to your local machine with `--host=0.0.0.0` command, access UI at https://192.168.X.X:4200/. Also, please change the `SOCKET_ENDPOINT` variable accordingly with your IP address in `client-app/src/environments/environment.ts` 
+Access the UI at http://localhost:4200/. If you port it to your local machine with `--host=0.0.0.0` command, access UI at http://192.168.X.X:4200/. Also, please change the `SOCKET_ENDPOINT` variable accordingly with your IP address in `client-app/src/environments/environment.ts` 
 
 ### Some More Configuration
 
@@ -59,7 +59,7 @@ IMAGE:
   RESIZE_WIDTH: 640 # in pixels
   RESIZE_HEIGHT: 640 # in pixels
 IO:
-  LOGS_SAVE_DIR: logs/
+  LOGS_SAVE_DIR: logs/ # created inside api/
 EMAIL:
   # While you are free to use any email id, you are recommended to create
   # a throwaway email id at any provider supporting SMTP (ex: Gmail).
@@ -80,6 +80,7 @@ SESSION_NAME: your_desired_name # or auto (session folder will be timestamp stri
 * Include a method `perform_task()` that uses the input image, trained model, and _your own_ inference code to output result appropriately. 
     * If it is a detection task, the method must return a list of tuples, where each tuple looks as follows: `(classname, [x, y, width, height])`
     * If it is a classification task, the method must return a tuple as follows: `(class_name, class_probability)`
+    * If it is a segmentation task, the method must return a mask image (torch tensor) of size equal to the input: `torch.Tensor` 
     * Please refer to `tasks/wheat_detection.py` and `task/leaf_disease.py` to know more.
 * Once `DummyTaskClass().perform_task()` is configured to work as above, import the class in `tasks/task_bank.py`
     * Something like `from .dummy_task import DummyTaskClass`
@@ -100,19 +101,20 @@ SESSION_NAME: your_desired_name # or auto (session folder will be timestamp stri
         outputs = task_obj.perform_task()
         return outputs
     ```
-* Finally, add the newly added task to `alltasks.yaml` as follows
+* Finally, add the newly added task to `tasks/alltasks.yaml` as follows
     ```
     - name: DummyTaskName
       display_name: Dummy Task
-      task_type: classification (or detection)
+      task_type: classification (or detection/segmentation)
     ```
 
 ## Pretrained Models 
 
 * Wheat Ear Detection - [FasterRCNN ResNet101](https://www.google.com/url?q=https://www.dropbox.com/s/74hvt7ykzg42tg7/wheat_head_frcnn.pth?dl%3D0&sa=D&source=hangouts&ust=1592644895243000&usg=AFQjCNHaJ6uUhi1fmsskQy-gN2vz93RB1A)
 * Leaf Disease Classification - [ResNet18](https://www.google.com/url?q=https://www.dropbox.com/s/8kzeyeopz8t5tpk/leaf_stress_resnet50.pth?dl%3D0&sa=D&source=hangouts&ust=1592644882326000&usg=AFQjCNFSeyA11V5HKlJHj72VvP4rdieY_g)
+* Leaf Segmentation - [MaskRCNN ResNet50]()
 
-Add these models to the project and provide the path in `tasks/wheat_detection.py` or `tasks/leaf_disease.py`. Please check the training code for these two tasks at `tasks/models/`.
+Add these models to the project and provide the path in `tasks/wheat_detection.py` or `tasks/leaf_disease.py` or `tasks/leaf_segmentation.py`. Please check the training code for these three tasks at `tasks/models/`.
 
 
 To use/test the provided pretrained models, you will need
