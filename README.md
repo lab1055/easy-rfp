@@ -12,10 +12,12 @@ Toolkit is tested only on Python 3.6. Works on both Windows and Linux systems.
 To use the basic template of the toolkit (without pretrained models)
 ```
 gphoto2==2.2.2
-opencv-python==4.2.0
+opencv-python==4.4.0
 Flask==1.1.2
 Flask-Cors==3.0.8
 Flask-SocketIO==4.3.1
+onnx==1.7.0
+onnxruntime==1.5.2
 ```
 
 NodeJS & Angular installation:
@@ -111,7 +113,7 @@ SESSION_NAME: your_desired_name # or auto (session folder will be timestamp stri
 ## Pretrained Models 
 
 * Wheat Ear Detection - [FasterRCNN ResNet101](https://www.dropbox.com/s/74hvt7ykzg42tg7/wheat_head_frcnn.pth) (480 MB)
-* Leaf Disease Classification - [ResNet18](https://www.dropbox.com/s/8kzeyeopz8t5tpk/leaf_stress_resnet50.pth) (45 MB)
+* Leaf Disease Classification - [ResNet18 (PyTorch)](https://www.dropbox.com/s/8kzeyeopz8t5tpk/leaf_stress_resnet50.pth) and [ResNet18 (ONNX)](https://www.dropbox.com/s/qe6wpkv1yq1fz4q/leaf_stress_resnet50.onnx) (45 MB)
 * Leaf Segmentation - [MaskRCNN ResNet50](https://www.dropbox.com/s/7nobrkr6i2dnwg1/leaf_seg_final.pth) (350 MB)
 
 Add these models to the project and provide the path in `tasks/wheat_detection.py` or `tasks/leaf_disease.py` or `tasks/leaf_segmentation.py`. Please check the training code for these three tasks at `tasks/models/`.
